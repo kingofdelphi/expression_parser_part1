@@ -1,0 +1,44 @@
+<html>
+	<head>
+		<link rel="stylesheet" type="text/css" href="style.css">
+	</head>
+	<body>
+		<h1>how to write a parser - part1 </h1>
+		Expression<input id='expression'>
+		Result<input id='result'>
+		<button onclick="parse()">PARSE</button>
+	</body>
+	<script>
+		// this will only take strings containing * operator [ no + ]
+		const parseMultiplicationSeparatedExpression = (expression) => {
+			const numbersString = expression.split('*');
+			const numbers = numbersString.map(noStr => +noStr);
+			const initialValue = 1.0;
+			const result = numbers.reduce((acc, no) => acc * no, initialValue);
+			return result;
+		};
+		// both * -
+		const parseMinusSeparatedExpression = (expression) => {
+			const numbersString = expression.split('-');
+			const numbers = numbersString.map(noStr => parseMultiplicationSeparatedExpression(noStr));
+			const initialValue = numbers[0];
+			const result = numbers.slice(1).reduce((acc, no) => acc - no, initialValue);
+			return result;
+		};
+		// * - + 
+		const parsePlusSeparatedExpression = (expression) => {
+			const numbersString = expression.split('+');
+			const numbers = numbersString.map(noStr => parseMinusSeparatedExpression(noStr));
+			const initialValue = 0.0;
+			const result = numbers.reduce((acc, no) => acc + no, initialValue);
+			return result;
+		};
+		const parse = () => {
+			const expressionNode = document.getElementById('expression');
+			const resultNode = document.getElementById('result');
+			const expression = expressionNode.value;
+			const result = parsePlusSeparatedExpression(expression);
+			resultNode.value = String(result);
+		};
+	</script>
+</html>
